@@ -180,16 +180,7 @@
   pointer-events: none;
 }
 
-/* Selected halo — single CSS pulse instead of SVG <animate> */
-@keyframes halo-pulse {
-  0%, 100% { opacity: 0.12; transform: scale(1); }
-  50% { opacity: 0.22; transform: scale(1.3); }
-}
-.selected-halo {
-  animation: halo-pulse 2.5s ease-in-out infinite;
-  transform-origin: center;
-  will-change: opacity, transform;
-}
+/* (halo-pulse removed — static glow ring only) */
 
 /* DFW subtle pulse */
 @keyframes dfw-pulse {

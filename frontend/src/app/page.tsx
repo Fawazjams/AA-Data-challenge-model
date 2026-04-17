@@ -102,13 +102,8 @@ const AirportDot = memo(function AirportDot({
   return (
     <Marker coordinates={[ap.lon, ap.lat]}>
       {isSelected && (
-        <circle r={12} fill={dotColor} opacity={0.12} className="selected-halo" />
+        <circle r={7} fill={dotColor} opacity={0.15} />
       )}
-      <circle
-        r={isSelected ? 7 : 4}
-        fill={dotColor}
-        opacity={dimmed ? 0.01 : isSelected ? 0.15 : 0.06}
-      />
       <circle
         r={dotR}
         fill={dotColor}
@@ -1207,6 +1202,57 @@ export default function FlightMapPage() {
                     </p>
                   </div>
                 )}
+
+
+
+                {/* Severity Matrix — Pie Chart */}
+                <div className="rounded-xl border border-[#0A1A3A]/8 bg-white p-5">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-[#6B7B8D] mb-3">
+                    Risk Severity Matrix
+                  </h3>
+                  <div className="flex items-center gap-6">
+                    <svg viewBox="0 0 120 120" className="h-32 w-32 shrink-0">
+                      {(() => {
+                        const cx = 60, cy = 60, r = 54;
+                        let cumulative = 0;
+                        return breakdown.map((b) => {
+                          const startAngle = cumulative * 3.6 * (Math.PI / 180);
+                          cumulative += b.pct;
+                          const endAngle = cumulative * 3.6 * (Math.PI / 180);
+                          const largeArc = b.pct > 50 ? 1 : 0;
+                          const x1 = cx + r * Math.sin(startAngle);
+                          const y1 = cy - r * Math.cos(startAngle);
+                          const x2 = cx + r * Math.sin(endAngle);
+                          const y2 = cy - r * Math.cos(endAngle);
+                          if (b.pct <= 0) return null;
+                          if (b.pct >= 100) {
+                            return (
+                              <circle key={b.name} cx={cx} cy={cy} r={r} fill={b.color} />
+                            );
+                          }
+                          return (
+                            <path
+                              key={b.name}
+                              d={`M ${cx},${cy} L ${x1},${y1} A ${r},${r} 0 ${largeArc} 1 ${x2},${y2} Z`}
+                              fill={b.color}
+                            />
+                          );
+                        });
+                      })()}
+                      <circle cx={60} cy={60} r={28} fill="white" />
+                    </svg>
+                    <div className="space-y-2.5 flex-1">
+                      {breakdown.map((b) => (
+                        <div key={b.name} className="flex items-center gap-2">
+                          <span className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ backgroundColor: b.color }} />
+                          <span className="text-xs flex-1">{b.name}</span>
+                          <span className="text-xs font-mono font-semibold">{b.pct.toFixed(0)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
 
                 {/* ---- DELAY PROPAGATION EXPLANATION ---- */}
                 <div className="rounded-xl border border-[#0A1A3A]/8 bg-white p-5 h-full">
